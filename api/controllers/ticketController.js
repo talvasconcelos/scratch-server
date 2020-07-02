@@ -6,12 +6,17 @@ const hash = require('../../utils')
 
 exports.list_all_tickets = (req, res) => {
   Ticket.aggregate()
-    .hint({ status: true }) //.find({}, { internal_id: 0, value: 0, endpoint: 0, prize: 0 })
+    .match({ status: true }) //.find({}, { internal_id: 0, value: 0, endpoint: 0, prize: 0 })
     .sample(30)
     //.limit(250)
     //.toArray()
     .exec((err, tickets) => {
-      if (err) res.end(err)
+      if (err) {
+        res.end(err)
+        console.error(err)
+        return
+      }
+      console.log(tickets)
       res.end(
         JSON.stringify(
           tickets.map(f => f._id) //.map(f => ({ endpoint: f.endpoint }))
@@ -68,7 +73,7 @@ exports.check_invoice = async (req, res) => {
   })
   const { settled } = await response.json()
   if (!settled) {
-    return res.end(JSON.stringify({ settled, url:'' }))
+    return res.end(JSON.stringify({ settled, url: '' }))
   }
 
   Ticket.findById(card_id, (err, ticket) => {

@@ -42,41 +42,25 @@ conn.once('open', async () => {
 const tickets = []
 const prizes = [
   {
-    value: 100,
-    qty: 1560,
-  },
-  {
-    value: 200,
-    qty: 975,
-  },
-  {
-    value: 250,
-    qty: 130,
-  },
-  {
-    value: 500,
-    qty: 325,
-  },
-  {
-    value: 1000,
-    qty: 58,
-  },
-  {
-    value: 2500,
-    qty: 29,
-  },
-  {
-    value: 5000,
-    qty: 11,
+    value: 10000,
+    qty: 17,
   },
   {
     value: 25000,
-    qty: 1,
+    qty: 5,
   },
+  {
+    value: 50000,
+    qty: 2,
+  },
+  {
+    value: 100000,
+    qty: 1,
+  }
 ]
 
 const getRandom = async () => {
-  let array = Array(26000)
+  let array = Array(100)
     .fill(0)
     .map(c => (c = uuidv4()))
   //let array = new Uint16Array(35000).map((c, i, arr) => (arr[i] = uuidv4()))

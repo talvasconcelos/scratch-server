@@ -16,7 +16,7 @@ exports.list_all_tickets = (req, res) => {
         console.error(err)
         return
       }
-      console.log(tickets)
+      // console.log(tickets)
       res.end(
         JSON.stringify(
           tickets.map(f => f._id) //.map(f => ({ endpoint: f.endpoint }))

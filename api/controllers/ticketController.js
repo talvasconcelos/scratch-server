@@ -53,7 +53,8 @@ exports.read_a_ticket = async (req, res) => {
 }
 
 exports.get_invoice = (req, res) => {
-  getInvoice()
+  const value = req.params.bet
+  getInvoice(value)
     .then(invoice => {
       res.end(JSON.stringify(invoice))
     })
@@ -106,7 +107,7 @@ async function getLNURL(sats) {
   }
 }
 
-async function getInvoice() {
+async function getInvoice(value) {
   try {
     const response = await fetch(
       `https://lnpay.co/v1/wallet/${process.env.LNKEY}/invoice`,
@@ -117,7 +118,7 @@ async function getInvoice() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          num_satoshis: 100,
+          num_satoshis: value,
           memo: 'Scratch to win!',
         }),
       }

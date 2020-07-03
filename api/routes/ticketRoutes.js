@@ -5,7 +5,7 @@ module.exports = app => {
   // todoList Routes
   app.get('/tickets', ticketList.list_all_tickets)
 
-  app.get('/tickets/invoice', ticketList.get_invoice)
+  app.get('/tickets/invoice/:bet', ticketList.get_invoice)
 
   app.get('/tickets/invoice/:invoice_id/:ticketID', ticketList.check_invoice)
 

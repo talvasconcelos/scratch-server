@@ -66,7 +66,7 @@ const prizes = [
 ]
 
 const getRandom = async () => {
-  let array = Array(200)
+  let array = Array(5000)
     .fill(0)
     .map(c => (c = uuidv4()))
   //let array = new Uint16Array(35000).map((c, i, arr) => (arr[i] = uuidv4()))
@@ -79,7 +79,7 @@ async function setPrizes({ value, qty }) {
   while (i < qty) {
     let rnd = tickets[(Math.random() * tickets.length) >> 0]
     if (!rnd.prize) {
-      rnd.prize = value
+      //rnd.prize = value
       i++
     }
   }

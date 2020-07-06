@@ -82,6 +82,7 @@ exports.check_invoice = async (req, res) => {
   })
 
   const { settled, num_satoshis, passThru } = await response.json()
+  console.log(await response.json())
 
   if (!settled) {
     return res.end(JSON.stringify({ settled, url: '' }))
@@ -162,6 +163,7 @@ async function getInvoice(value, id) {
       }
     )
     const body = await response.json()
+    console.log(body)
     return { id: body.id, invoice: body.payment_request.toUpperCase() }
   } catch (e) {
     throw new Error(e)

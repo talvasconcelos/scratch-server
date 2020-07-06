@@ -54,12 +54,12 @@ exports.read_a_ticket = async (req, res) => {
 }
 
 exports.get_invoice = (req, res) => {
-  const value = +req.params.bet
-  if (value !== price) {
-    res.end(JSON.stringify({ hack: true }))
-    return
-  }
-  getInvoice(value)
+  // const value = +req.params.bet
+  // if (value !== price) {
+  //   res.end(JSON.stringify({ hack: true }))
+  //   return
+  // }
+  getInvoice(100000)
     .then(invoice => {
       res.end(JSON.stringify(invoice))
     })
@@ -77,7 +77,11 @@ exports.check_invoice = async (req, res) => {
       'Content-Type': 'application/json',
     },
   })
-  const { settled } = await response.json()
+  
+  const { settled, num_satoshis } = await response.json()
+  // if(+num_satoshis !== price){
+  //   return res.end(JSON.stringify({ hack: true }))
+  // }
   if (!settled) {
     return res.end(JSON.stringify({ settled, url: '' }))
   }

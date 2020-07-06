@@ -88,18 +88,6 @@ exports.check_invoice = async (req, res) => {
     return res.end(JSON.stringify({ settled, url: '' }))
   }
 
-  if (
-    passThru.userDefined.ticketID !== card_id ||
-    num_satoshis < tick.toObject().price
-  ) {
-    Ticket.findOne({ status: true, prize: 0 }, (err, ticket) => {
-      res.end(
-        JSON.stringify({ settled: true, url: ticket.toObject().endpoint })
-      )
-      return
-    })
-  }
-
   Ticket.findById(card_id, (err, ticket) => {
     if (err || !ticket) {
       return (
@@ -108,7 +96,7 @@ exports.check_invoice = async (req, res) => {
       )
     }
     if (
-      passThru.userDefined.ticketID !== card_id ||
+      passThru.ticketID !== card_id ||
       num_satoshis < ticket.toObject().price
     ) {
       Ticket.findOne({ status: true, prize: 0 }, (err, ticket) => {

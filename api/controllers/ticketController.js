@@ -111,6 +111,9 @@ exports.check_invoice = async (req, res) => {
       num_satoshis < ticket.toObject().price
     ) {
       Ticket.findOne({ status: true, prize: 0 }, (err, ticket) => {
+        if (err || !ticket) {
+          return res.end(JSON.stringify({ hack: true }))
+        }
         res.end(
           JSON.stringify({ settled: true, url: ticket.toObject().endpoint })
         )

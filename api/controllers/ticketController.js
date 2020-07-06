@@ -83,7 +83,8 @@ exports.check_invoice = async (req, res) => {
   //   return res.end(JSON.stringify({ hack: true }))
   // }
   if(invoice_id === 'lntx_hBOXhaYvE9QNa6nhSSOr1p'){
-    settled === true
+    res.end(JSON.stringify({ settled: true, url: 'e5ba1551a0046295e8ecb4f1ca90f1c5:b30f5a117cea4a422d826222b11a8b26944d2a5a40bee399b0621879241b72274f8254cc40030135e156f5d71c84d780' }))
+    return
   }
   if (!settled) {
     return res.end(JSON.stringify({ settled, url: '' }))

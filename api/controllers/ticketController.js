@@ -71,7 +71,7 @@ exports.get_invoice = async (req, res) => {
 exports.check_invoice = async (req, res) => {
   const invoice_id = req.params.invoice_id
   const card_id = req.params.ticketID
-  const tick = await Ticket.findById(id)
+  const tick = await Ticket.findById(card_id)
 
   const response = await fetch(`https://lnpay.co/v1/lntx/${invoice_id}`, {
     method: 'GET',

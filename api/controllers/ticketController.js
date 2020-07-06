@@ -3,6 +3,7 @@ global.fetch = require('node-fetch')
 const mongoose = require('mongoose')
 const Ticket = mongoose.model('Ticket')
 const hash = require('../../utils')
+let price
 
 exports.list_all_tickets = (req, res) => {
   Ticket.aggregate()
@@ -70,6 +71,7 @@ exports.get_invoice = async (req, res) => {
 exports.check_invoice = async (req, res) => {
   const invoice_id = req.params.invoice_id
   const card_id = req.params.ticketID
+  const tick = await Ticket.findById(id)
 
   const response = await fetch(`https://lnpay.co/v1/lntx/${invoice_id}`, {
     method: 'GET',
@@ -85,7 +87,10 @@ exports.check_invoice = async (req, res) => {
     return res.end(JSON.stringify({ settled, url: '' }))
   }
 
-  if (+num_satoshis !== price || passThru.userDefined.ticketID !== card_id) {
+  if (
+    passThru.userDefined.ticketID !== card_id ||
+    num_satoshis < tick.toObject().price
+  ) {
     Ticket.findOne({ status: true, prize: 0 }, (err, ticket) => {
       res.end(
         JSON.stringify({ settled: true, url: ticket.toObject().endpoint })
@@ -95,11 +100,23 @@ exports.check_invoice = async (req, res) => {
   }
 
   Ticket.findById(card_id, (err, ticket) => {
-    if (err || !ticket)
+    if (err || !ticket) {
       return (
         (res.statusCode = 401),
         res.end(JSON.stringify({ error: 'No ticket with that ID!' }))
       )
+    }
+    if (
+      passThru.userDefined.ticketID !== card_id ||
+      num_satoshis < ticket.toObject().price
+    ) {
+      Ticket.findOne({ status: true, prize: 0 }, (err, ticket) => {
+        res.end(
+          JSON.stringify({ settled: true, url: ticket.toObject().endpoint })
+        )
+        return
+      })
+    }
     res.end(JSON.stringify({ settled: true, url: ticket.toObject().endpoint }))
   })
 }

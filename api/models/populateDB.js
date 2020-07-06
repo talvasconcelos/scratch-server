@@ -28,6 +28,7 @@ conn.once('open', async () => {
           internal_id: c,
           endpoint: hash.encrypt(c),
           prize: 0,
+          price: 10000,
           status: true,
         })
       })
@@ -40,14 +41,19 @@ conn.once('open', async () => {
 })
 
 const tickets = []
+
 const prizes = [
   {
     value: 10000,
-    qty: 17,
+    qty: 23,
   },
   {
-    value: 25000,
-    qty: 5,
+    value: 20000,
+    qty: 9,
+  },
+  {
+    value: 40000,
+    qty: 4,
   },
   {
     value: 50000,
@@ -60,7 +66,7 @@ const prizes = [
 ]
 
 const getRandom = async () => {
-  let array = Array(100)
+  let array = Array(200)
     .fill(0)
     .map(c => (c = uuidv4()))
   //let array = new Uint16Array(35000).map((c, i, arr) => (arr[i] = uuidv4()))

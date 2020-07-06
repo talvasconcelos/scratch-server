@@ -3,6 +3,7 @@ global.fetch = require('node-fetch')
 const mongoose = require('mongoose')
 const Ticket = mongoose.model('Ticket')
 const hash = require('../../utils')
+const price = 10000
 
 exports.list_all_tickets = (req, res) => {
   Ticket.aggregate()
@@ -54,6 +55,10 @@ exports.read_a_ticket = async (req, res) => {
 
 exports.get_invoice = (req, res) => {
   const value = req.params.bet
+  if (value !== price) {
+    res.end(JSON.stringify({ hack: true }))
+    return
+  }
   getInvoice(value)
     .then(invoice => {
       res.end(JSON.stringify(invoice))
@@ -128,4 +133,16 @@ async function getInvoice(value) {
   } catch (e) {
     throw new Error(e)
   }
+}
+
+function fuckYou() {
+  let i = 1n;
+  let x = 3n * (10n ** 1000020n);
+  let pi = x;
+  while (x > 0) {
+    x = x * i / ((i + 1n) * 4n);
+    pi += x / (i + 2n);
+    i += 2n;
+  }
+  console.log(pi / (10n ** 20n));
 }

@@ -3,7 +3,6 @@ global.fetch = require('node-fetch')
 const mongoose = require('mongoose')
 const Ticket = mongoose.model('Ticket')
 const hash = require('../../utils')
-const price = 10000
 
 exports.list_all_tickets = (req, res) => {
   Ticket.aggregate()
@@ -20,7 +19,7 @@ exports.list_all_tickets = (req, res) => {
       // console.log(tickets)
       res.end(
         JSON.stringify(
-          tickets.map(f => f._id) //.map(f => ({ endpoint: f.endpoint }))
+          tickets.map(f => ({ id: f._id, price: +f.price })) //.map(f => ({ endpoint: f.endpoint }))
         )
       )
     })
@@ -53,13 +52,15 @@ exports.read_a_ticket = async (req, res) => {
   )
 }
 
-exports.get_invoice = (req, res) => {
-  // const value = +req.params.bet
+exports.get_invoice = async (req, res) => {
+  const id = req.params.ticketID
+  const tick = await Ticket.findById(id)
+
   // if (value !== price) {
   //   res.end(JSON.stringify({ hack: true }))
   //   return
   // }
-  getInvoice(100000)
+  getInvoice(tick.toObject().price, id)
     .then(invoice => {
       res.end(JSON.stringify(invoice))
     })
@@ -77,17 +78,20 @@ exports.check_invoice = async (req, res) => {
       'Content-Type': 'application/json',
     },
   })
-  
-  const { settled, num_satoshis } = await response.json()
-  // if(+num_satoshis !== price){
-  //   return res.end(JSON.stringify({ hack: true }))
-  // }
-  if(invoice_id === 'lntx_hBOXhaYvE9QNa6nhSSOr1p'){
-    res.end(JSON.stringify({ settled: true, url: 'e5ba1551a0046295e8ecb4f1ca90f1c5:b30f5a117cea4a422d826222b11a8b26944d2a5a40bee399b0621879241b72274f8254cc40030135e156f5d71c84d780' }))
-    return
-  }
+
+  const { settled, num_satoshis, passThru } = await response.json()
+
   if (!settled) {
     return res.end(JSON.stringify({ settled, url: '' }))
+  }
+
+  if (+num_satoshis !== price || passThru.userDefined.ticketID !== card_id) {
+    Ticket.findOne({ status: true, prize: 0 }, (err, ticket) => {
+      res.end(
+        JSON.stringify({ settled: true, url: ticket.toObject().endpoint })
+      )
+      return
+    })
   }
 
   Ticket.findById(card_id, (err, ticket) => {
@@ -120,7 +124,7 @@ async function getLNURL(sats) {
   }
 }
 
-async function getInvoice(value) {
+async function getInvoice(value, id) {
   try {
     const response = await fetch(
       `https://lnpay.co/v1/wallet/${process.env.LNKEY}/invoice`,
@@ -131,8 +135,9 @@ async function getInvoice(value) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          num_satoshis: value,
+          num_satoshis: +value,
           memo: 'Scratch to win!',
+          passThru: { ticketID: id },
         }),
       }
     )
@@ -141,16 +146,4 @@ async function getInvoice(value) {
   } catch (e) {
     throw new Error(e)
   }
-}
-
-function fuckYou() {
-  let i = 1n
-  let x = 3n * 10n ** 1000020n
-  let pi = x
-  while (x > 0) {
-    x = (x * i) / ((i + 1n) * 4n)
-    pi += x / (i + 2n)
-    i += 2n
-  }
-  console.log(pi / 10n ** 20n)
 }

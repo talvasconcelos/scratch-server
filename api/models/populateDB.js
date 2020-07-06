@@ -4,6 +4,8 @@ const { v4: uuidv4 } = require('uuid')
 const Mongoose = require('mongoose')
 const Ticket = require('./ticketModel')
 
+const price = 10000
+
 const mongoURI = process.env.MURI
 Mongoose.Promise = global.Promise
 
@@ -28,7 +30,7 @@ conn.once('open', async () => {
           internal_id: c,
           endpoint: hash.encrypt(c),
           prize: 0,
-          price: 10000,
+          price: price,
           status: true,
         })
       })
@@ -62,11 +64,11 @@ const prizes = [
   {
     value: 100000,
     qty: 1,
-  }
+  },
 ]
 
 const getRandom = async () => {
-  let array = Array(5000)
+  let array = Array(200)
     .fill(0)
     .map(c => (c = uuidv4()))
   //let array = new Uint16Array(35000).map((c, i, arr) => (arr[i] = uuidv4()))
@@ -79,7 +81,7 @@ async function setPrizes({ value, qty }) {
   while (i < qty) {
     let rnd = tickets[(Math.random() * tickets.length) >> 0]
     if (!rnd.prize) {
-      //rnd.prize = value
+      rnd.prize = value
       i++
     }
   }

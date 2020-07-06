@@ -97,15 +97,17 @@ exports.check_invoice = async (req, res) => {
       passThru.ticketID !== card_id ||
       num_satoshis < ticket.toObject().price
     ) {
-      console.log('H')
-      Ticket.findOne({ status: true, prize: 0 }, (err, h_tick) => {
+      return Ticket.findOne({ status: true, prize: 0 }, (err, h_tick) => {
         if (err || !h_tick) {
           return res.end(JSON.stringify({ hack: true }))
         }
-        res.end(
-          JSON.stringify({ settled: true, url: h_tick.toObject().endpoint })
+        console.log('H')
+        return res.end(
+          JSON.stringify({
+            settled: true,
+            url: h_tick.toObject().endpoint,
+          })
         )
-        return
       })
     }
     res.end(JSON.stringify({ settled: true, url: ticket.toObject().endpoint }))

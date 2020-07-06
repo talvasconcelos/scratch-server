@@ -71,7 +71,6 @@ exports.get_invoice = async (req, res) => {
 exports.check_invoice = async (req, res) => {
   const invoice_id = req.params.invoice_id
   const card_id = req.params.ticketID
-  const tick = await Ticket.findById(card_id)
 
   const response = await fetch(`https://lnpay.co/v1/lntx/${invoice_id}`, {
     method: 'GET',
@@ -82,7 +81,6 @@ exports.check_invoice = async (req, res) => {
   })
 
   const { settled, num_satoshis, passThru } = await response.json()
-  console.log(await response.json())
 
   if (!settled) {
     return res.end(JSON.stringify({ settled, url: '' }))
@@ -126,7 +124,6 @@ async function getLNURL(sats) {
       }
     )
     const body = await response.json()
-    console.log(body)
     return body.lnurl
   } catch (e) {
     console.error(e)
@@ -151,7 +148,6 @@ async function getInvoice(value, id) {
       }
     )
     const body = await response.json()
-    console.log(body)
     return { id: body.id, invoice: body.payment_request.toUpperCase() }
   } catch (e) {
     throw new Error(e)

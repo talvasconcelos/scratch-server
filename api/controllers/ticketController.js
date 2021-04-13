@@ -72,7 +72,7 @@ exports.check_invoice = async (req, res) => {
   const invoice_id = req.params.invoice_id
   const card_id = req.params.ticketID
 
-  const response = await fetch(`https://lnpay.co/v1/lntx/${invoice_id}`, {
+  const response = await fetch(`https://api.lnpay.co/v1/lntx/${invoice_id}`, {
     method: 'GET',
     headers: {
       'X-Api-Key': process.env.LNAPI,
@@ -117,7 +117,7 @@ exports.check_invoice = async (req, res) => {
 async function getLNURL(sats) {
   try {
     const response = await fetch(
-      `https://lnpay.co/v1/wallet/${process.env.LNKEY}/lnurl/withdraw?num_satoshis=${sats}`,
+      `https://api.lnpay.co/v1/wallet/${process.env.LNKEY}/lnurl/withdraw?num_satoshis=${sats}`,
       {
         method: 'GET',
         headers: {
@@ -136,7 +136,7 @@ async function getLNURL(sats) {
 async function getInvoice(value, id) {
   try {
     const response = await fetch(
-      `https://lnpay.co/v1/wallet/${process.env.LNKEY}/invoice`,
+      `https://api.lnpay.co/v1/wallet/${process.env.LNKEY}/invoice`,
       {
         method: 'POST',
         headers: {
